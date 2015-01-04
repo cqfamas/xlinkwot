@@ -58,11 +58,11 @@ Quick start
 
 5. Start the debug server, add a device , a sensor and a command for that
    sensor.
-6. Visit http://127.0.0.1:8000/api/v1/device/?format=json&username=apiuser&api_key=f20dab087bcf9ede8fc57a188f615d6763cd5cf0 to see the json data of your device, andvisit http://127.0.0.1:8000/api/v1/sensor/?format=json&username=xkong&api_key=f20dab087bcf9ede8fc57a188f615d6763cd5cf0 to see the json data of your sensor, including the command for the sensor. Enjoy!
+6. Visit http://127.0.0.1:8000/api/v1/device/?format=json&username=apiuser&api_key=f20dab087bcf9ede8fc57a188f615d6763cd5cf0 to see the json data of your device, andvisit http://127.0.0.1:8000/api/v1/sensor/?format=json&username=apiuser&api_key=f20dab087bcf9ede8fc57a188f615d6763cd5cf0 to see the json data of your sensor, including the command for the sensor. Enjoy!
 
 Requirements
 --------------
 django-tastypie
 
 Developed and mantained by Xiao Yu.
-Please feel free to report bugs and your suggestions at here.
+Please feel free to report bugs and your suggestions at `here <https://github.com/xkong/xlinkwot/issues>`_.
