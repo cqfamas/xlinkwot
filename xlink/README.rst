@@ -7,8 +7,7 @@ django server. It provides RESTful APIs for your device.
 Quick start
 ------------
 
-1.In your settings.py, enable admin and add `xlink` and `tastypie` to your INSTALLED_APPS:
-.. code-block:: python
+1.In your settings.py, enable admin and add `xlink` and `tastypie` to your INSTALLED_APPS::
 
     INSTALLED_APPS = (
         ... 
@@ -19,8 +18,7 @@ Quick start
 
 2. Execute `python manage.py syncdb` to create table for xlink app.
 
-3. Enable `admin` and add `xlink api` to your root urls. In your urls.py, add
-.. code-block:: python
+3. Enable `admin` and add `xlink api` to your root urls. In your urls.py, add::
 
     from tastypie.api import Api
 
