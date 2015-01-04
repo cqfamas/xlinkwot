@@ -1,0 +1,12 @@
+Upload all the files in this directory to your OpenWrt device, and put them to
+/usr/local/xlink. 
+
+Make a soft link to /usr/bin/xlink:
+
+  root@openwrt# ln -s /usr/local/xlink/xlink /usr/bin/xlink
+
+You can make a test:
+
+  root@openwrt# xlink some_subcommand args1 args3
+
+

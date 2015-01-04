@@ -1,0 +1,150 @@
+#!/usr/bin/env python
+# coding: utf-8
+#
+# xiaoyu <xiaokong1937@gmail.com>
+#
+# 2014/12/24
+#
+"""
+Process Backend for xlink-arduino.
+
+E.g( Arduino yun):
+  Process p;
+  p.begin("xlink_cmd_get");
+  p.addParameter(APIKEY);
+  p.addParameter(APIUSER);
+  p.addParameter(SENSORID);
+  p.addParameter(DEBUG);
+  p.run();
+
+ """
+import sys
+import os
+from importlib import import_module
+from optparse import NO_DEFAULT, OptionParser
+
+from base import BaseCommand, logger
+
+_commands = None
+current_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, current_path)
+
+
+class CommandError(Exception):
+    pass
+
+
+def find_commands(command_path):
+    command_dir = os.path.join(command_path, 'commands')
+    try:
+        return [f[:-3] for f in os.listdir(command_dir)
+                if not f.startswith('_') and f.endswith('.py')]
+    except OSError:
+        return []
+
+
+def get_commands():
+    global _commands
+    if _commands is None:
+        _commands = [name for name in find_commands(current_path)]
+    return _commands
+
+
+def load_command_class(name):
+    """
+    Given a command name, returns the Command class instance.
+
+    All errors raised by the import process (ImportError, AttributeError)
+    are allowed to propagete.
+
+    """
+    module = import_module('commands.{}'.format(name))
+    return module.Command()
+
+
+def call_command(name, *args, **options):
+    """
+    Call the given command, with the given options and args/kwargs.
+
+    This is the primary API you should use for calling specific commands.
+
+    Some examples:
+        call_command('syncdb')
+        call_command('shell', plain=True)
+        call_command('sqlall', 'myapp')
+    """
+    if name not in get_commands():
+        raise CommandError('Not a valid command.')
+    # Load the command object.
+    klass = load_command_class(name)
+    defaults = {}
+    for opt in klass.option_list:
+        if opt.default is NO_DEFAULT:
+            defaults[opt.dest] = None
+        else:
+            defaults[opt.dest] = opt.default
+    defaults.update(options)
+
+    return klass.execute(*args, **defaults)
+
+
+class LaxOptionParser(OptionParser):
+    def error(self, msg):
+        pass
+
+    def print_help(self):
+        pass
+
+    def print_lax_help(self):
+        OptionParser.print_help(self)
+
+    def _process_args(self, largs, rargs, values):
+        while rargs:
+            arg = rargs[0]
+            try:
+                if arg[0:2] == "--" and len(arg) > 2:
+                    self._process_long_opt(rargs, values)
+                elif arg[:1] == "-" and len(arg) > 1:
+                    self._process_short_opts(rargs, values)
+                else:
+                    del rargs[0]
+                    raise Exception
+            except:
+                largs.append(arg)
+
+
+class ManagementUtility(object):
+    def __init__(self, argv=None):
+        self.argv = argv or sys.argv[:]
+        self.prog_name = os.path.basename(self.argv[0])
+
+    def fetch_command(self, subcommand):
+        if subcommand not in get_commands():
+            raise CommandError('Not a valid command.')
+        # Load the command object.
+        klass = load_command_class(subcommand)
+        return klass
+
+    def execute(self):
+        parser = LaxOptionParser(usage="%prog subcommand [options] [args]",
+                                 version='1.0.0',
+                                 option_list=BaseCommand.option_list)
+        options, args = parser.parse_args(self.argv)
+        try:
+            subcommand = self.argv[1]
+        except IndexError:
+            subcommand = 'help'
+        if subcommand == 'help':
+            parser.print_help()
+            return
+        self.fetch_command(subcommand).run_from_argv(self.argv)
+
+
+def execute_from_command_line(argv=None):
+    utility = ManagementUtility(argv)
+    logger.debug("Cmd called with argv [{}]".format(str(argv)))
+    utility.execute()
+
+
+if __name__ == "__main__":
+    execute_from_command_line(sys.argv)
