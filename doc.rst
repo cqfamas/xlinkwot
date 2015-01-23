@@ -55,7 +55,9 @@ Django实现RESTful APIs有很多插件，本文使用的是 `tastypie
 <http://tastypieapi.org/>`_
 。Django-tastypie提供了5种认证方法（Basic，ApiKey，Session，Digest,
 OAuth），出于Arduino及OpenWrt的实际需要，我们选择的认证方法是ApiKey方法。即，硬件设备（OpenWrt、Arduino）和上游设备（上位机：PC, 移动设备等）采用向服务器发送ApiKey和ApiUsername的方式实现认证。
- **注意**
+
+**注意**
+
  *事实上，采用这种ApiKey的认证方法是存在安全风险的，因此不建议在互联网中使用这种认证。它不能有效避免中间人攻击。如果有条件，建议使用OAuth2.0进行认证（Django-tastypie也可以实现OAuth2.0认证）。*
 
 数据格式上，我们选择的是json，虽然选择xml和选择json对于服务端和客户端来说技术难度上区别不是很大，但是我们依然决定使用json。当然，默认也提供xml格式的数据。
@@ -364,7 +366,9 @@ OAuth），出于Arduino及OpenWrt的实际需要，我们选择的认证方法�
             }
 
 注意上面这些代码，与实例相比，增加了一行
+
   **user = fields.ForeignKey(UserResource, 'user')**
+
 这一行的作用是把已经写好的UserResource作为一个外键引用到当前的Resource并以user字段存在。UserResource是我在另一个文件中写好的东西。主要实现获取用户的username等信息。读者可以自己实现。
 
 源码中 **Meta** 部分：
@@ -683,6 +687,7 @@ Arduino端只要指定每隔多长时间定时通过API获取这个设备的指�
 
 关于以上代码的几个解释：
     from xlink_sdk.xlink import XlinkClient
+
 这里的xlink_sdk即为上文提到的RESTful APIs的python SDK。
 
     from base import BaseCommand, logger
