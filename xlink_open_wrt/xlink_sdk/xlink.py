@@ -8,6 +8,13 @@
 """
 SDK for xlink app of Ninan Project.
 
+Reference:
+
+sinaweibopy:
+Author: liaoxuefeng
+http://github.liaoxuefeng.com/sinaweibopy/
+(Apache Lisence)
+
 """
 import json
 
